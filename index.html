@@ -12,6 +12,7 @@
             -webkit-tap-highlight-color: transparent; 
             background-color: #fdfaf0; 
             margin: 0; padding: 0;
+            overscroll-behavior-y: contain;
         }
         .tap:active { transform: scale(0.97); transition: 0.1s; }
         .glass-card { background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(10px); }
@@ -39,21 +40,24 @@
 </head>
 <body class="text-slate-800 min-h-screen text-pretty">
 
+    <!-- Header -->
     <header class="bg-amber-600 text-white pt-10 pb-28 rounded-b-[5.5rem] shadow-xl relative overflow-hidden text-center px-4">
         <div class="max-w-md mx-auto relative z-10">
-            <h1 class="text-5xl font-black tracking-tighter italic drop-shadow-lg mb-3">Dorabeauty</h1>
-            <div id="status-msg" class="inline-block px-5 py-1.5 bg-black/15 rounded-full text-xs font-bold uppercase tracking-widest leading-none tracking-tighter">系統就緒</div>
+            <h1 class="text-5xl font-black tracking-tighter italic drop-shadow-lg mb-3 uppercase">Dorabeauty</h1>
+            <div id="status-msg" class="inline-block px-5 py-1.5 bg-black/15 rounded-full text-xs font-bold uppercase tracking-widest leading-none">系統就緒</div>
         </div>
-        <div class="absolute right-[-20px] top-[-20px] w-56 h-56 bg-white/10 rounded-full opacity-20"></div>
+        <div class="absolute right-[-20px] top-[-20px] w-56 h-56 bg-white/10 rounded-full opacity-20 shadow-inner"></div>
     </header>
 
     <main class="max-w-md mx-auto px-6 -mt-20 pb-20 relative z-20">
         <div class="glass-card rounded-[4rem] p-10 shadow-2xl border border-white/60">
+            
+            <!-- 問候語 -->
             <div class="flex flex-col items-center text-center mb-12 mt-2">
-                <div class="w-20 h-20 bg-amber-100 rounded-[2.2rem] flex items-center justify-center text-amber-600 mb-6 shadow-sm">
+                <div class="w-20 h-20 bg-amber-100 rounded-[2.2rem] flex items-center justify-center text-amber-600 mb-6 shadow-sm border border-amber-200/30">
                     <svg id="greet-icon-svg" xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></svg>
                 </div>
-                <h2 id="big-greet" class="text-3xl font-black text-slate-800 tracking-tight leading-tight mb-3 italic">您好，辛苦的媽媽</h2>
+                <h2 id="big-greet" class="text-3xl font-black text-slate-800 tracking-tight leading-tight mb-3">載入中...</h2>
                 <div class="bg-pink-50 p-6 rounded-[2.5rem] border border-pink-100 shadow-sm flex gap-4 items-start text-left w-full">
                     <div class="bg-pink-500 p-2 rounded-full text-white shrink-0 mt-1 shadow-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
@@ -62,18 +66,20 @@
                 </div>
             </div>
 
+            <!-- 地址輸入 -->
             <div class="search-container mb-12 text-center">
                 <div class="flex items-center gap-2 mb-4 ml-2">
                     <span class="w-2.5 h-2.5 bg-amber-500 rounded-full animate-pulse"></span>
-                    <p class="text-sm text-slate-500 font-black uppercase tracking-widest leading-none">輸入到府服務地址</p>
+                    <p class="text-sm text-slate-500 font-black uppercase tracking-widest leading-none">到府服務地址</p>
                 </div>
-                <input id="addr-val" type="text" placeholder="輸入路名、社區或詳細地址..." class="bg-slate-50 border-none rounded-[1.8rem] p-6 text-base font-bold outline-none focus:ring-2 focus:ring-amber-500 shadow-inner text-slate-700 w-full mb-6">
+                <input id="addr-val" type="text" placeholder="輸入路名、社區或完整地址..." class="bg-slate-50 border-none rounded-[1.8rem] p-6 text-base font-bold outline-none focus:ring-2 focus:ring-amber-500 shadow-inner text-slate-700 w-full mb-6">
                 <button id="main-btn" onclick="handleSearch()" class="w-full bg-slate-800 text-white py-6 rounded-[1.8rem] font-black text-lg tap shadow-lg transition-all disabled:bg-slate-300">
                     開始費用試算
                 </button>
             </div>
 
-            <div id="res-block" class="hidden mt-12 pt-12 border-t-2 border-dashed border-slate-100 animate-in fade-in">
+            <!-- 結果顯示 -->
+            <div id="res-block" class="hidden mt-12 pt-12 border-t-2 border-dashed border-slate-100 animate-in fade-in slide-in-from-bottom-5">
                 <div class="bg-slate-900 rounded-[3.5rem] p-10 text-white relative overflow-hidden shadow-2xl border-t-4 border-amber-500">
                     <div class="relative z-10 text-center">
                         <p class="text-amber-400 text-xs font-bold uppercase tracking-widest mb-2">預估報價總額</p>
@@ -81,6 +87,7 @@
                             <span class="text-3xl text-amber-300 font-light">$</span>
                             <span id="res-total" class="text-7xl font-black tracking-tighter">0</span>
                         </div>
+                        
                         <div class="space-y-4 border-t border-white/10 pt-8 text-sm text-left">
                             <div class="flex justify-between items-center text-slate-400 font-bold tracking-tight">
                                 <span>基本服務費</span>
@@ -91,12 +98,13 @@
                                 <span class="text-amber-400 font-black text-base">+$<span id="res-travel-fee">0</span></span>
                             </div>
                             <div class="bg-white/5 p-5 rounded-[1.5rem] mt-6 leading-relaxed border border-white/5 shadow-inner">
-                                <span class="text-amber-500 font-black text-xs uppercase block mb-1 tracking-widest font-black">📍 預約地點</span>
+                                <span class="text-amber-500 font-black text-xs uppercase block mb-1 tracking-widest">📍 預約地點</span>
                                 <span id="res-addr" class="text-white font-bold block text-base truncate">--</span>
                             </div>
                         </div>
+
                         <div class="grid grid-cols-2 gap-4 mt-10">
-                            <button onclick="copyToClipboard()" class="bg-white/10 text-white h-16 rounded-2xl flex items-center justify-center gap-3 tap border border-white/10">
+                            <button onclick="copyToClipboard()" class="bg-white/10 text-white h-16 rounded-2xl flex items-center justify-center gap-3 tap border border-white/10 transition-colors hover:bg-white/15">
                                 <div class="flex flex-col items-start leading-tight">
                                     <span class="text-[9px] font-bold opacity-80 uppercase tracking-tighter">Copy</span>
                                     <span class="text-sm font-black tracking-widest">複製結果</span>
@@ -104,8 +112,8 @@
                             </button>
                             <button id="line-btn" onclick="openPrepModal()" class="bg-[#06C755] text-white h-16 rounded-2xl flex items-center justify-center gap-3 tap shadow-lg transition-all hover:bg-[#05b34c]">
                                 <div class="flex flex-col items-start leading-tight text-left">
-                                    <span class="text-[9px] font-bold opacity-90 uppercase tracking-tighter leading-none mb-1">LINE</span>
-                                    <span class="text-sm font-black tracking-widest leading-none">預約報價</span>
+                                    <span class="text-[9px] font-bold opacity-90 uppercase tracking-tighter">LINE</span>
+                                    <span class="text-sm font-black tracking-widest">預約報價</span>
                                 </div>
                             </button>
                         </div>
@@ -115,7 +123,7 @@
         </div>
 
         <div class="mt-10 p-8 bg-amber-50 rounded-[3rem] border border-amber-100 shadow-sm px-8">
-            <p class="text-sm text-amber-900 font-black mb-5 italic flex items-center gap-2 uppercase tracking-widest">
+            <p class="text-xs text-amber-900 font-black mb-5 italic flex items-center gap-2 uppercase tracking-widest">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
                 服務費計費詳情
             </p>
@@ -124,17 +132,19 @@
                 <li class="flex justify-between items-center border-t border-amber-200/50 pt-4"><span>來回里程 10km 內</span><span class="text-emerald-600 font-black font-black">免收車馬費</span></li>
                 <li class="flex justify-between items-center"><span>來回里程 10-20km</span><span class="text-amber-600 font-black">加收 $100</span></li>
                 <li class="flex justify-between items-center border-b border-amber-200/50 pb-4"><span>來回里程 20-30km</span><span class="text-amber-600 font-black">加收 $200</span></li>
-                <li class="text-xs text-slate-400 font-medium pt-2 text-center italic">※ 註：超過 10 公里後，每 10 公里加收 $100 元，以此類推。</li>
+                <li class="text-[10px] text-slate-400 font-medium pt-2 text-center italic">※ 註：超過 10 公里後，每 10 公里加收 $100 元，以此類推。</li>
             </ul>
         </div>
     </main>
 
+    <!-- 預約確認彈窗 -->
     <div id="prep-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md hidden items-center justify-center p-8 z-[10000]">
         <div class="bg-white rounded-[3.5rem] w-full max-w-sm modal-animate overflow-hidden shadow-2xl border border-white/20">
             <div class="bg-amber-600 p-8 text-white text-center relative">
                 <h3 class="text-2xl font-black tracking-tight">預約確認叮嚀</h3>
                 <p class="text-amber-100 text-xs mt-1 font-bold opacity-80 uppercase tracking-widest tracking-tighter">Appointment Prep List</p>
             </div>
+            
             <div class="p-10 space-y-6">
                 <p class="text-slate-500 text-sm font-bold leading-relaxed text-center">宜津老師到府前，請辛苦的媽媽幫忙準備以下物品：</p>
                 <ul class="space-y-4">
@@ -160,38 +170,51 @@
     </div>
 
     <footer class="text-center text-slate-300 text-xs tracking-[0.4em] uppercase py-12 font-black px-4">
-        Dorabeauty Maternal Pro v17.2
+        Dorabeauty Maternal Pro v17.7
     </footer>
 
     <script>
+        // --- 核心配置 ---
         const GOOGLE_API_KEY = "AIzaSyAXSGaFCS3VcYghu3rUh4nmogf0qwJCuCo"; 
         const CONFIG = {
             brandName: "Dorabeauty",
-            lineOaId: "@bmy3560l", 
+            lineOaId: "@bmy3560l", // 宜津老師正確的 ID
             storeLocation: "南投縣中寮鄉永福村10鄰永嘉新村23巷2弄38號",
             storeLat: 23.931213, storeLng: 120.730107,
-            baseServiceFee: 2000, stepPrice: 100, freeAllowanceKm: 10
+            baseServiceFee: 2000, stepPrice: 100, freeAllowanceKm: 10,
+            dailyLimit: 10 
         };
 
-        const MATERNAL_TIPS = ["放鬆心情是幫助乳汁分泌的最佳良藥","正確的含乳姿勢可以避免乳頭受傷","產後記得多補充水分","寶寶的哭聲是他在跟您說話","親餵後若感到胸部脹痛，適度冷敷可舒緩","建立穩定的作息有助於寶寶安穩入眠"];
+        const MATERNAL_TIPS = [
+            "放鬆心情是幫助乳汁分泌的最佳良藥，媽媽辛苦了，記得多深呼吸唷！",
+            "正確的含乳姿勢可以避免乳頭受傷，讓哺餵過程更順利、更舒適。",
+            "產後記得多補充水分，溫開水對身體修復與母乳製造非常有幫助。",
+            "寶寶的哭聲是他在跟您說話，除了肚子餓，也可以檢查看看尿布是否濕囉。",
+            "親餵後若感到胸部脹痛，適度的冷敷（避開乳暈）可以有效舒緩不適。",
+            "建立穩定的作息有助於寶寶安穩入眠，也讓媽媽有更多休息的時間。",
+            "產後適度的伸展與散步，不僅有助於體力恢復，也能讓心情更愉悅。",
+            "餵奶時找個支撐性好的靠背，能減輕腰部與肩膀的負擔，保護脊椎。"
+        ];
 
-        let geocoder, distanceService, autocomplete, isGoogleReady = false;
+        let geocoder, distanceService, isGoogleReady = false;
+        let lastResultData = null;
 
         window.initGoogleServices = function() {
             try {
                 geocoder = new google.maps.Geocoder();
                 distanceService = new google.maps.DistanceMatrixService();
-                autocomplete = new google.maps.places.Autocomplete(document.getElementById('addr-val'), {
+                new google.maps.places.Autocomplete(document.getElementById('addr-val'), {
                     componentRestrictions: { country: "tw" },
                     fields: ["formatted_address", "geometry"]
                 });
                 isGoogleReady = true; updateStatus("系統就緒");
-            } catch (e) { updateStatus("目前為備用計算模式"); }
+            } catch (e) { updateStatus("目前為備用模式"); }
         };
 
         window.handleSearch = () => {
             const rawVal = document.getElementById('addr-val').value.trim();
             if (!rawVal) return alert("請輸入地址");
+            
             const btn = document.getElementById('main-btn');
             btn.disabled = true; btn.innerHTML = '<span class="loader"></span> 正在試算路徑...';
             
@@ -210,7 +233,7 @@
                 const data = await res.json();
                 if (data && data.length > 0) {
                     calculateStandardDistance(parseFloat(data[0].lat), parseFloat(data[0].lon), rawInput);
-                } else { resetBtn(); alert("找不到該地址，請輸入更詳細的路名。"); }
+                } else { resetBtn(); alert("找不到該地址，請輸入正確路名。"); }
             } catch (e) { resetBtn(); alert("網路連線不穩。"); }
         }
 
@@ -238,8 +261,9 @@
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
             let d = R * c;
             if (d < 1.5 || rawInput.includes("永嘉新村")) d = 0;
-            showResult(parseFloat((d * 1.4 * 2).toFixed(1)), rawInput);
+            const roundTrip = parseFloat((d * 1.4 * 2).toFixed(1));
             resetBtn();
+            showResult(roundTrip, rawInput);
         }
 
         function showResult(dist, rawInput) {
@@ -251,7 +275,7 @@
             document.getElementById('res-dist').innerText = dist;
             document.getElementById('res-travel-fee').innerText = travelFee;
             document.getElementById('res-addr').innerText = rawInput;
-            window.lastResult = `您好，宜津老師！我想預約泌乳服務。\n\n【Dorabeauty 預約試算單】\n📍 地點：${rawInput}\n🚗 來回路程：${dist} km\n✨ 基本服務：$2,000\n🎫 車馬費：$${travelFee}\n💰 預估總計：$${total} 元\n\n※ 地址由客戶輸入，實際以宜津老師確認為準。`;
+            window.lastResult = `您好，我想預約泌乳服務！\n\n【Dorabeauty 預約試算單】\n📍 地點：${rawInput}\n🚗 來回路程：${dist} km\n✨ 基本服務：$2,000\n🎫 車馬費：$${travelFee}\n💰 預估總計：$${total} 元\n\n※ 地址由客戶手動輸入，實際以店長確認為準。`;
             document.getElementById('res-block').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -275,7 +299,11 @@
 
         window.confirmToLine = () => {
             closePrepModal();
-            window.location.href = `https://line.me/R/oaMessage/${CONFIG.lineOaId.replace('@','')}/?${encodeURIComponent(window.lastResult)}`;
+            // 關鍵修正：自動移除 ID 裡的 @，LINE 的這類連結 endpoint 不加 @ 才是最準的。
+            const cleanId = CONFIG.lineOaId.replace('@','');
+            // 使用專為官方帳號設計的導向網址
+            const lineUrl = `https://line.me/R/oaMessage/${cleanId}/?${encodeURIComponent(window.lastResult)}`;
+            window.location.href = lineUrl;
         };
 
         window.copyToClipboard = () => {
@@ -305,4 +333,3 @@
     </script>
 </body>
 </html>
-
