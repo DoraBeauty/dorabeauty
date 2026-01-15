@@ -25,17 +25,47 @@
             display: inline-block; vertical-align: middle; margin-right: 8px;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .pac-container {
-            border-radius: 1.5rem; margin-top: 8px; padding: 12px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            border: none; font-family: 'Noto Sans TC', sans-serif;
-            z-index: 9999;
-        }
+        /* Modal 動畫與樣式 */
         @keyframes modalFadeIn {
             from { opacity: 0; transform: translateY(20px) scale(0.95); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
         .modal-animate { animation: modalFadeIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .form-input {
+            width: 100%;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.75rem;
+            font-size: 0.95rem;
+            color: #334155;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+            background-color: #fff;
+        }
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 0.4rem;
+        }
+        .section-title {
+            font-size: 1rem;
+            font-weight: 900;
+            color: #d97706;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        /* 隱藏 Scrollbar 但保持捲動 */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen text-pretty">
@@ -43,13 +73,10 @@
     <!-- Header -->
     <header class="bg-amber-600 text-white pt-8 pb-28 rounded-b-[5.5rem] shadow-xl relative overflow-hidden text-center px-4">
         <div class="max-w-md mx-auto relative z-10 flex flex-col items-center">
-            
-            <!-- Logo 區域修改開始 -->
+            <!-- Logo -->
             <div class="bg-white p-3 rounded-2xl shadow-lg mb-4 transform hover:scale-105 transition-transform duration-300">
                 <img src="https://duk.tw/95wxTU.jpg" alt="Dorabeauty Logo" class="h-28 w-auto object-contain rounded-xl block">
             </div>
-            <!-- Logo 區域修改結束 -->
-
             <div id="status-msg" class="inline-block px-5 py-1.5 bg-black/15 rounded-full text-xs font-bold uppercase tracking-widest leading-none mt-1">系統就緒</div>
         </div>
         <div class="absolute right-[-20px] top-[-20px] w-56 h-56 bg-white/10 rounded-full opacity-20 shadow-inner"></div>
@@ -89,12 +116,12 @@
                 <div class="bg-slate-900 rounded-[3.5rem] p-10 text-white relative overflow-hidden shadow-2xl border-t-4 border-amber-500">
                     <div class="relative z-10 text-center">
                         <p class="text-amber-400 text-xs font-bold uppercase tracking-widest mb-2">預估報價總額</p>
-                        <div class="flex items-baseline justify-center gap-1 mb-10">
+                        <div class="flex items-baseline justify-center gap-1 mb-8">
                             <span class="text-3xl text-amber-300 font-light">$</span>
                             <span id="res-total" class="text-7xl font-black tracking-tighter">0</span>
                         </div>
                         
-                        <div class="space-y-4 border-t border-white/10 pt-8 text-sm text-left">
+                        <div class="space-y-4 border-t border-white/10 pt-6 text-sm text-left">
                             <div class="flex justify-between items-center text-slate-400 font-bold tracking-tight">
                                 <span>基本服務費</span>
                                 <span class="text-slate-100 font-black text-base">$2,000</span>
@@ -103,16 +130,17 @@
                                 <span>里程車馬費 (<span id="res-dist" class="text-amber-400">0</span>km)</span>
                                 <span class="text-amber-400 font-black text-base">+$<span id="res-travel-fee">0</span></span>
                             </div>
-                            <div class="bg-white/5 p-5 rounded-[1.5rem] mt-6 leading-relaxed border border-white/5 shadow-inner">
+                            <div class="bg-white/5 p-4 rounded-[1.5rem] mt-4 leading-relaxed border border-white/5 shadow-inner">
                                 <span class="text-amber-500 font-black text-xs uppercase block mb-1 tracking-widest">📍 預約地點</span>
                                 <span id="res-addr" class="text-white font-bold block text-base truncate">--</span>
                             </div>
                         </div>
 
-                        <div class="flex flex-col gap-3 mt-10">
-                            <button id="line-btn" onclick="openPrepModal()" class="bg-[#06C755] text-white py-5 rounded-2xl flex items-center justify-center gap-3 tap shadow-lg transition-all hover:bg-[#05b34c] w-full">
-                                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" class="shrink-0"><path d="M24 10.304c0-4.587-4.825-8.317-10.764-8.317-5.938 0-10.764 3.73-10.764 8.317 0 4.108 3.821 7.545 8.995 8.21 0.35 0.075 0.825 0.231 0.945 0.531 0.108 0.273 0.071 0.7 0.035 0.976 0 0-0.128 0.772-0.156 0.938-0.047 0.272-0.219 1.065 0.944 0.582 1.163-0.483 6.279-3.698 8.564-6.335 1.564-1.801 2.205-3.555 2.205-4.902z"/></svg>
-                                <span class="text-lg font-black tracking-widest">立即複製結果並預約</span>
+                        <div class="flex flex-col gap-3 mt-8">
+                            <!-- 按鈕文字變更為引導下一步 -->
+                            <button id="next-step-btn" onclick="openFormModal()" class="bg-amber-500 text-white py-5 rounded-2xl flex items-center justify-center gap-3 tap shadow-lg transition-all hover:bg-amber-400 w-full">
+                                <span class="text-lg font-black tracking-widest">下一步：填寫諮詢表單</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                             </button>
                         </div>
                     </div>
@@ -120,6 +148,7 @@
             </div>
         </div>
 
+        <!-- 費用說明區塊 (維持不變) -->
         <div class="mt-10 p-8 bg-amber-50 rounded-[3rem] border border-amber-100 shadow-sm px-8">
             <p class="text-xs text-amber-900 font-black mb-5 italic flex items-center gap-2 uppercase tracking-widest">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -135,41 +164,162 @@
         </div>
     </main>
 
-    <!-- 預約確認彈窗 -->
-    <div id="prep-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-md hidden items-center justify-center p-8 z-[10000]">
-        <div class="bg-white rounded-[3.5rem] w-full max-w-sm modal-animate overflow-hidden shadow-2xl border border-white/20">
-            <div class="bg-amber-600 p-8 text-white text-center relative">
-                <h3 class="text-2xl font-black tracking-tight">預約叮嚀與複製</h3>
-                <p class="text-amber-100 text-xs mt-1 font-bold opacity-80 uppercase tracking-widest text-center">Copy & Appointment</p>
-            </div>
-            
-            <div class="p-10 space-y-6">
-                <p class="text-slate-500 text-sm font-bold leading-relaxed text-center">
-                    將為您<span class="text-amber-600 underline">複製試算單</span>並開啟 LINE，<br>請在聊天框「貼上」傳送給宜津老師。
-                </p>
-                <div class="bg-slate-50 p-5 rounded-2xl border-2 border-dashed border-amber-200 text-xs text-slate-400 italic">
-                    請準備：乾淨毛巾、浴巾、玻璃奶瓶。
-                </div>
+    <!-- 諮詢表單 Modal -->
+    <div id="form-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden z-[9999] overflow-hidden">
+        <div class="absolute inset-0 overflow-y-auto no-scrollbar py-10 px-4">
+            <div class="bg-white rounded-[2.5rem] w-full max-w-lg mx-auto modal-animate shadow-2xl relative min-h-[80vh]">
                 
-                <div class="pt-4 flex flex-col gap-3">
-                    <button onclick="confirmToLine()" class="w-full bg-[#06C755] text-white py-5 rounded-2xl font-black text-lg tap shadow-lg flex items-center justify-center gap-2">
-                        複製並開啟 LINE
+                <!-- Modal Header -->
+                <div class="bg-amber-600 p-6 rounded-t-[2.5rem] sticky top-0 z-20 flex justify-between items-center shadow-md">
+                    <div>
+                        <h3 class="text-white text-xl font-black">填寫諮詢資料</h3>
+                        <p class="text-amber-200 text-xs mt-1">Information Form</p>
+                    </div>
+                    <button onclick="closeFormModal()" class="bg-black/20 text-white p-2 rounded-full hover:bg-black/30 tap">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
-                    <button onclick="closePrepModal()" class="w-full text-slate-400 text-sm font-bold py-2 tracking-widest uppercase text-center">返回修改</button>
+                </div>
+
+                <!-- 隱私權聲明 -->
+                <div class="bg-amber-50 px-6 py-4 border-b border-amber-100">
+                    <p class="text-[10px] text-amber-800 leading-relaxed font-bold flex gap-2">
+                        <svg class="shrink-0" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        個資保護聲明：本表單資料僅供 Dorabeauty 服務評估與聯繫使用，絕不外洩，請媽咪放心填寫。
+                    </p>
+                </div>
+
+                <!-- Form Content -->
+                <div class="p-8 space-y-8 pb-32">
+                    
+                    <!-- 1. 基本資料 -->
+                    <div class="space-y-4">
+                        <h4 class="section-title">
+                            <span class="w-1.5 h-5 bg-amber-500 rounded-full"></span> 1. 媽咪基本資料
+                        </h4>
+                        <div>
+                            <label class="form-label">請問媽咪的姓名？</label>
+                            <input type="text" id="f-name" class="form-input" placeholder="例如：王小美">
+                        </div>
+                        <div>
+                            <label class="form-label">聯絡電話？</label>
+                            <input type="tel" id="f-phone" class="form-input" placeholder="09xx-xxx-xxx">
+                        </div>
+                    </div>
+
+                    <!-- 2. 生產資訊 -->
+                    <div class="space-y-4">
+                        <h4 class="section-title">
+                            <span class="w-1.5 h-5 bg-amber-500 rounded-full"></span> 2. 生產與哺乳經驗
+                        </h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="form-label">生產日期</label>
+                                <input type="date" id="f-birthdate" class="form-input">
+                            </div>
+                            <div>
+                                <label class="form-label">生產方式</label>
+                                <select id="f-method" class="form-input">
+                                    <option value="自然產">自然產</option>
+                                    <option value="剖腹產">剖腹產</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="form-label">這是第幾胎？</label>
+                            <input type="text" id="f-parity" class="form-input" placeholder="例如：1">
+                        </div>
+                        <div>
+                            <label class="form-label">之前的哺乳經驗如何？</label>
+                            <textarea id="f-exp" class="form-input h-20 resize-none" placeholder="例如：第一胎親餵很順利，或這是第一胎無經驗"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 3. 地點資訊 -->
+                    <div class="space-y-4">
+                        <h4 class="section-title">
+                            <span class="w-1.5 h-5 bg-amber-500 rounded-full"></span> 3. 所在位置
+                        </h4>
+                        <div>
+                            <label class="form-label">生產醫院</label>
+                            <input type="text" id="f-hospital" class="form-input" placeholder="例如：中國附醫">
+                        </div>
+                        <div>
+                            <label class="form-label">月子中心 (若在家請留空)</label>
+                            <input type="text" id="f-center" class="form-input" placeholder="例如：沁美產後護理之家">
+                        </div>
+                        <div>
+                            <label class="form-label">需要協助的地址 (可修改)</label>
+                            <textarea id="f-address" class="form-input h-20 resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 4. 寶寶資訊 -->
+                    <div class="space-y-4">
+                        <h4 class="section-title">
+                            <span class="w-1.5 h-5 bg-amber-500 rounded-full"></span> 4. 寶寶資訊
+                        </h4>
+                        <div>
+                            <label class="form-label">寶寶出生體重及目前體重？</label>
+                            <input type="text" id="f-baby-weight" class="form-input" placeholder="例如：出生3000g / 目前3200g">
+                        </div>
+                    </div>
+
+                    <!-- 5. 餵奶狀況 -->
+                    <div class="space-y-4">
+                        <h4 class="section-title">
+                            <span class="w-1.5 h-5 bg-amber-500 rounded-full"></span> 5. 目前餵奶方式 (選填)
+                        </h4>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <p class="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">A. 若有手擠乳</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="text" id="f-hand-freq" class="form-input text-sm" placeholder="頻率 (幾小時一次)">
+                                <input type="text" id="f-hand-vol" class="form-input text-sm" placeholder="一次擠奶量 (cc)">
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <p class="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">B. 若有親餵</p>
+                            <div class="grid grid-cols-2 gap-3 mb-3">
+                                <input type="text" id="f-latch-freq" class="form-input text-sm" placeholder="頻率 (幾小時一次)">
+                                <input type="text" id="f-latch-duration" class="form-input text-sm" placeholder="一次餵多久">
+                            </div>
+                            <input type="text" id="f-latch-feeling" class="form-input text-sm" placeholder="親餵感覺 (痛/順利/寶寶不含乳)">
+                        </div>
+                    </div>
+
+                    <!-- 6. 需求協助 -->
+                    <div class="space-y-4">
+                        <h4 class="section-title">
+                            <span class="w-1.5 h-5 bg-amber-500 rounded-full"></span> 6. 目前需要協助的問題
+                        </h4>
+                        <div>
+                            <label class="form-label">請描述目前狀況</label>
+                            <textarea id="f-issue" class="form-input h-24 resize-none" placeholder="例如：塞奶硬塊推不開、乳頭破皮疼痛..."></textarea>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Footer Actions -->
+                <div class="fixed bottom-0 left-0 right-0 p-6 bg-white/95 backdrop-blur border-t border-slate-100 z-50 flex flex-col gap-2 max-w-lg mx-auto rounded-b-[2.5rem] rounded-t-none">
+                     <button onclick="submitFormToLine()" class="w-full bg-[#06C755] text-white py-4 rounded-2xl flex items-center justify-center gap-2 tap shadow-lg hover:bg-[#05b34c] transition-all">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" class="shrink-0"><path d="M24 10.304c0-4.587-4.825-8.317-10.764-8.317-5.938 0-10.764 3.73-10.764 8.317 0 4.108 3.821 7.545 8.995 8.21 0.35 0.075 0.825 0.231 0.945 0.531 0.108 0.273 0.071 0.7 0.035 0.976 0 0-0.128 0.772-0.156 0.938-0.047 0.272-0.219 1.065 0.944 0.582 1.163-0.483 6.279-3.698 8.564-6.335 1.564-1.801 2.205-3.555 2.205-4.902z"/></svg>
+                        <span class="text-lg font-black tracking-widest">複製資料並開啟 LINE</span>
+                    </button>
+                    <p class="text-[10px] text-slate-400 text-center">請於 LINE 聊天室「貼上」傳送即可</p>
                 </div>
             </div>
         </div>
     </div>
 
     <footer class="text-center text-slate-300 text-xs tracking-[0.4em] uppercase py-12 font-black px-4">
-        Dorabeauty Maternal Pro v17.9
+        Dorabeauty Maternal Pro v18.0
     </footer>
 
     <script>
         const GOOGLE_API_KEY = "AIzaSyAXSGaFCS3VcYghu3rUh4nmogf0qwJCuCo"; 
         const CONFIG = {
             brandName: "Dorabeauty",
-            lineId: "bmy3560l", // 這裡請保持為您正確的 ID（不用加@）
+            lineId: "bmy3560l",
             storeLocation: "南投縣中寮鄉永福村10鄰永嘉新村23巷2弄38號",
             storeLat: 23.931213, storeLng: 120.730107,
             baseServiceFee: 2000, stepPrice: 100, freeAllowanceKm: 10
@@ -182,7 +332,13 @@
         ];
 
         let geocoder, distanceService, isGoogleReady = false;
-        let lastResultData = null;
+        // 儲存試算結果，不包含個人資料，僅包含金額與距離
+        let calculationResult = {
+            dist: 0,
+            fee: 0,
+            total: 0,
+            rawAddress: ""
+        };
 
         window.initGoogleServices = function() {
             try {
@@ -254,12 +410,21 @@
             let travelFee = 0;
             if (dist > CONFIG.freeAllowanceKm) { travelFee = Math.floor(dist / 10) * CONFIG.stepPrice; }
             const total = 2000 + travelFee;
+            
+            // 儲存全域變數供表單使用
+            calculationResult = {
+                dist: dist,
+                fee: travelFee,
+                total: total,
+                rawAddress: rawInput
+            };
+
             document.getElementById('res-block').classList.remove('hidden');
             document.getElementById('res-total').innerText = total.toLocaleString();
             document.getElementById('res-dist').innerText = dist;
             document.getElementById('res-travel-fee').innerText = travelFee;
             document.getElementById('res-addr').innerText = rawInput;
-            window.lastResult = `您好，我想預約泌乳服務！\n\n【Dorabeauty 預約試算單】\n📍 地點：${rawInput}\n🚗 路程：${dist} km\n✨ 基本服務：$2,000\n🎫 車馬費：$${travelFee}\n💰 預估總計：$${total} 元\n\n※ 地址由客戶輸入，實際以宜津老師確認為準。`;
+            
             document.getElementById('res-block').scrollIntoView({ behavior: 'smooth' });
         }
 
@@ -270,32 +435,110 @@
 
         function updateStatus(msg) { document.getElementById('status-msg').innerText = msg; }
 
-        window.openPrepModal = () => {
-            if (!window.lastResult) return alert("請先完成地址試算！");
-            document.getElementById('prep-modal').classList.remove('hidden');
-            document.getElementById('prep-modal').classList.add('flex');
+        // --- 表單 Modal 控制邏輯 ---
+
+        window.openFormModal = () => {
+            if (calculationResult.total === 0) return alert("請先完成地址試算！");
+            
+            // 自動帶入地址
+            document.getElementById('f-address').value = calculationResult.rawAddress;
+            
+            const modal = document.getElementById('form-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            document.body.style.overflow = 'hidden'; // 防止背景捲動
         };
 
-        window.closePrepModal = () => {
-            document.getElementById('prep-modal').classList.add('hidden');
-            document.getElementById('prep-modal').classList.remove('flex');
+        window.closeFormModal = () => {
+            const modal = document.getElementById('form-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.body.style.overflow = '';
         };
 
-        // 核心修正：自動複製並開啟 LINE
-        window.confirmToLine = () => {
-            // 1. 執行複製
+        window.submitFormToLine = () => {
+            // 1. 蒐集表單資料
+            const name = document.getElementById('f-name').value.trim();
+            const phone = document.getElementById('f-phone').value.trim();
+            
+            if (!name || !phone) {
+                alert("請填寫姓名與聯絡電話，方便老師聯繫您喔！");
+                return;
+            }
+
+            const birthDate = document.getElementById('f-birthdate').value;
+            const method = document.getElementById('f-method').value;
+            const parity = document.getElementById('f-parity').value;
+            const exp = document.getElementById('f-exp').value;
+            
+            const hospital = document.getElementById('f-hospital').value;
+            const center = document.getElementById('f-center').value;
+            const finalAddress = document.getElementById('f-address').value;
+            
+            const babyWeight = document.getElementById('f-baby-weight').value;
+            
+            const handFreq = document.getElementById('f-hand-freq').value;
+            const handVol = document.getElementById('f-hand-vol').value;
+            const latchFreq = document.getElementById('f-latch-freq').value;
+            const latchDuration = document.getElementById('f-latch-duration').value;
+            const latchFeeling = document.getElementById('f-latch-feeling').value;
+            
+            const issue = document.getElementById('f-issue').value;
+
+            // 2. 組合餵奶描述
+            let feedingDesc = "";
+            if (handFreq || handVol) feedingDesc += `\n   - 手擠乳：${handFreq || '--'} / ${handVol || '--'}`;
+            if (latchFreq || latchDuration || latchFeeling) feedingDesc += `\n   - 親餵：${latchFreq || '--'} / ${latchDuration || '--'} / ${latchFeeling || '--'}`;
+            if (!feedingDesc) feedingDesc = "尚未填寫";
+
+            // 3. 產生完整訊息
+            const finalMessage = 
+`您好，我想預約泌乳服務！
+
+【Dorabeauty 諮詢資料表】
+1. 媽咪資料
+👤 姓名：${name}
+📞 電話：${phone}
+
+2. 生產資訊
+📅 日期：${birthDate || '未填'}
+🏥 方式：${method} / 第 ${parity || '?'} 胎
+🍼 經驗：${exp || '無'}
+
+3. 地點
+🏠 地址：${finalAddress}
+🏥 醫院：${hospital || '未填'}
+🏨 月中：${center || '無'}
+
+4. 寶寶與餵奶
+👶 體重：${babyWeight || '未填'}
+🥛 餵奶方式：${feedingDesc}
+
+5. 需求協助
+❓ 狀況：${issue || '當面說明'}
+
+-------------------
+【費用試算結果】
+🚗 預估路程：${calculationResult.dist} km
+💰 試算總額：$${calculationResult.total.toLocaleString()}
+(含基本費 $2,000 + 車馬費 $${calculationResult.fee})
+
+※ 資料僅供評估使用，實際報價以老師確認為主。`;
+
+            // 4. 複製並跳轉
             const el = document.createElement('textarea');
-            el.value = window.lastResult;
+            el.value = finalMessage;
             document.body.appendChild(el);
             el.select();
             document.execCommand('copy');
             document.body.removeChild(el);
 
-            // 2. 開啟 LINE (使用最穩定的 ti/p 格式)
             const cleanId = CONFIG.lineId.replace('@','');
             const lineUrl = `https://line.me/ti/p/@${cleanId}`; 
             
-            closePrepModal();
+            closeFormModal();
+            // 簡單提示
+            alert("資料已複製！即將開啟 LINE...");
             window.location.href = lineUrl;
         };
 
@@ -321,4 +564,5 @@
     </script>
 </body>
 </html>
+
 
