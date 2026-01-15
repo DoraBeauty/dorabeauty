@@ -148,7 +148,7 @@
             </div>
         </div>
 
-        <!-- 費用說明區塊 (維持不變) -->
+        <!-- 費用說明區塊 -->
         <div class="mt-10 p-8 bg-amber-50 rounded-[3rem] border border-amber-100 shadow-sm px-8">
             <p class="text-xs text-amber-900 font-black mb-5 italic flex items-center gap-2 uppercase tracking-widest">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
@@ -169,8 +169,8 @@
         <div class="absolute inset-0 overflow-y-auto no-scrollbar py-10 px-4">
             <div class="bg-white rounded-[2.5rem] w-full max-w-lg mx-auto modal-animate shadow-2xl relative min-h-[80vh]">
                 
-                <!-- Modal Header -->
-                <div class="bg-amber-600 p-6 rounded-t-[2.5rem] sticky top-0 z-20 flex justify-between items-center shadow-md">
+                <!-- Modal Header (移除了 sticky 屬性) -->
+                <div class="bg-amber-600 p-6 rounded-t-[2.5rem] flex justify-between items-center shadow-md">
                     <div>
                         <h3 class="text-white text-xl font-black">填寫諮詢資料</h3>
                         <p class="text-amber-200 text-xs mt-1">Information Form</p>
@@ -253,14 +253,20 @@
                         </div>
                     </div>
 
-                    <!-- 4. 寶寶資訊 -->
+                    <!-- 4. 寶寶資訊 (已修正：分為兩格) -->
                     <div class="space-y-4">
                         <h4 class="section-title">
                             <span class="w-1.5 h-5 bg-amber-500 rounded-full"></span> 4. 寶寶資訊
                         </h4>
-                        <div>
-                            <label class="form-label">寶寶出生體重及目前體重？</label>
-                            <input type="text" id="f-baby-weight" class="form-input" placeholder="例如：出生3000g / 目前3200g">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="form-label">出生體重</label>
+                                <input type="text" id="f-birth-weight" class="form-input" placeholder="例如：3000g">
+                            </div>
+                            <div>
+                                <label class="form-label">目前體重</label>
+                                <input type="text" id="f-current-weight" class="form-input" placeholder="例如：3200g">
+                            </div>
                         </div>
                     </div>
 
@@ -312,7 +318,7 @@
     </div>
 
     <footer class="text-center text-slate-300 text-xs tracking-[0.4em] uppercase py-12 font-black px-4">
-        Dorabeauty Maternal Pro v18.0
+        Dorabeauty Maternal Pro v18.1
     </footer>
 
     <script>
@@ -475,7 +481,9 @@
             const center = document.getElementById('f-center').value;
             const finalAddress = document.getElementById('f-address').value;
             
-            const babyWeight = document.getElementById('f-baby-weight').value;
+            // 修正：分別取得出生體重與目前體重
+            const birthWeight = document.getElementById('f-birth-weight').value;
+            const currentWeight = document.getElementById('f-current-weight').value;
             
             const handFreq = document.getElementById('f-hand-freq').value;
             const handVol = document.getElementById('f-hand-vol').value;
@@ -511,7 +519,7 @@
 🏨 月中：${center || '無'}
 
 4. 寶寶與餵奶
-👶 體重：${babyWeight || '未填'}
+👶 體重：出生 ${birthWeight || '--'} / 目前 ${currentWeight || '--'}
 🥛 餵奶方式：${feedingDesc}
 
 5. 需求協助
