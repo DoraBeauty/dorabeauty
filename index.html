@@ -132,7 +132,6 @@
                             </div>
                             <div class="bg-white/5 p-4 rounded-[1.5rem] mt-4 leading-relaxed border border-white/5 shadow-inner">
                                 <span class="text-amber-500 font-black text-xs uppercase block mb-1 tracking-widest">📍 預約地點</span>
-                                <!-- 修改點：這裡會動態插入來源標籤 -->
                                 <div id="res-addr-container">
                                      <span id="res-addr" class="text-white font-bold text-base break-words">--</span>
                                 </div>
@@ -322,7 +321,7 @@
     </div>
 
     <footer class="text-center text-slate-300 text-xs tracking-[0.4em] uppercase py-12 font-black px-4">
-        Dorabeauty Maternal Pro v18.5
+        Dorabeauty Maternal Pro v18.6
     </footer>
 
     <script>
@@ -420,7 +419,6 @@
             showResult(roundTrip, rawInput, "備用機制");
         }
 
-        // 修改：接收 source 參數
         function showResult(dist, rawInput, source) {
             let travelFee = 0;
             if (dist > CONFIG.freeAllowanceKm) { travelFee = Math.floor(dist / 10) * CONFIG.stepPrice; }
@@ -530,7 +528,7 @@
 
             if (!feedingDesc) feedingDesc = "尚未填寫";
 
-            // 3. 產生完整訊息 (修改：加入運算來源標註)
+            // 3. 產生完整訊息
             const finalMessage = 
 `您好，我想預約泌乳服務！
 
@@ -564,11 +562,20 @@
 
 ※ 資料僅供評估使用，實際報價以老師確認為主。`;
 
-            // 4. 複製並跳轉
+            // 4. 複製並跳轉 (修正：防止鍵盤彈出)
             const el = document.createElement('textarea');
             el.value = finalMessage;
+            
+            // 關鍵修改：設定為唯讀，並移出畫面
+            el.setAttribute('readonly', '');
+            el.style.position = 'absolute';
+            el.style.left = '-9999px';
+            
             document.body.appendChild(el);
+            
             el.select();
+            el.setSelectionRange(0, 99999); // 針對 iOS 的額外相容性
+            
             document.execCommand('copy');
             document.body.removeChild(el);
 
@@ -603,4 +610,5 @@
     </script>
 </body>
 </html>
+
 
