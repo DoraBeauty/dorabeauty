@@ -41,10 +41,16 @@
 <body class="text-slate-800 min-h-screen text-pretty">
 
     <!-- Header -->
-    <header class="bg-amber-600 text-white pt-10 pb-28 rounded-b-[5.5rem] shadow-xl relative overflow-hidden text-center px-4">
-        <div class="max-w-md mx-auto relative z-10">
-            <h1 class="text-5xl font-black tracking-tighter italic drop-shadow-lg mb-3 uppercase">Dorabeauty</h1>
-            <div id="status-msg" class="inline-block px-5 py-1.5 bg-black/15 rounded-full text-xs font-bold uppercase tracking-widest leading-none">系統就緒</div>
+    <header class="bg-amber-600 text-white pt-8 pb-28 rounded-b-[5.5rem] shadow-xl relative overflow-hidden text-center px-4">
+        <div class="max-w-md mx-auto relative z-10 flex flex-col items-center">
+            
+            <!-- Logo 區域修改開始 -->
+            <div class="bg-white p-3 rounded-2xl shadow-lg mb-4 transform hover:scale-105 transition-transform duration-300">
+                <img src="https://duk.tw/95wxTU.jpg" alt="Dorabeauty Logo" class="h-28 w-auto object-contain rounded-xl block">
+            </div>
+            <!-- Logo 區域修改結束 -->
+
+            <div id="status-msg" class="inline-block px-5 py-1.5 bg-black/15 rounded-full text-xs font-bold uppercase tracking-widest leading-none mt-1">系統就緒</div>
         </div>
         <div class="absolute right-[-20px] top-[-20px] w-56 h-56 bg-white/10 rounded-full opacity-20 shadow-inner"></div>
     </header>
@@ -156,7 +162,7 @@
     </div>
 
     <footer class="text-center text-slate-300 text-xs tracking-[0.4em] uppercase py-12 font-black px-4">
-        Dorabeauty Maternal Pro v17.8
+        Dorabeauty Maternal Pro v17.9
     </footer>
 
     <script>
@@ -315,5 +321,4 @@
     </script>
 </body>
 </html>
-
 
