@@ -597,34 +597,48 @@
             const hospital = document.getElementById('f-hospital').value;
             const center = document.getElementById('f-center').value;
             const finalAddress = document.getElementById('f-address').value;
-            const birthWeight = document.getElementById('f-birth-weight').value;
-            const currentWeight = document.getElementById('f-current-weight').value;
-            const handFreq = document.getElementById('f-hand-freq').value;
-            const handVol = document.getElementById('f-hand-vol').value;
-            const latchFreq = document.getElementById('f-latch-freq').value;
-            const latchDuration = document.getElementById('f-latch-duration').value;
-            const latchFeeling = document.getElementById('f-latch-feeling').value;
             const issue = document.getElementById('f-issue').value;
+            const latchFeeling = document.getElementById('f-latch-feeling').value;
 
-            // --- 修正開始：詳細的餵奶資訊邏輯 ---
+            // --- 修正開始：自動補上單位邏輯 ---
+            
+            // 定義一個小幫手函式：如果內容只有數字，就加上指定的單位
+            const addUnit = (val, unit) => {
+                if (!val) return '未填';
+                const strVal = String(val).trim();
+                // 正規表達式：檢查是否只包含數字和小數點
+                if (/^[\d.]+$/.test(strVal)) {
+                    return strVal + unit;
+                }
+                return strVal;
+            };
+
+            // 取得欄位值並套用單位
+            const f_birthWeight = addUnit(document.getElementById('f-birth-weight').value, 'g');
+            const f_currentWeight = addUnit(document.getElementById('f-current-weight').value, 'g');
+            
+            const f_handFreq = addUnit(document.getElementById('f-hand-freq').value, '小時一次');
+            const f_handVol = addUnit(document.getElementById('f-hand-vol').value, 'cc');
+            
+            const f_latchFreq = addUnit(document.getElementById('f-latch-freq').value, '小時一次');
+            const f_latchDuration = addUnit(document.getElementById('f-latch-duration').value, '分鐘');
+
             let feedingDesc = "";
             
             // 處理手擠乳資訊
-            if (handFreq || handVol) {
-                feedingDesc += `\n   • 手擠乳：頻率「${handFreq || '未填'}」，奶量「${handVol || '未填'}」`;
+            if (f_handFreq !== '未填' || f_handVol !== '未填') {
+                feedingDesc += `\n   • 手擠乳：頻率「${f_handFreq}」，奶量「${f_handVol}」`;
             }
             
             // 處理親餵資訊
-            if (latchFreq || latchDuration || latchFeeling) {
-                feedingDesc += `\n   • 親餵：頻率「${latchFreq || '未填'}」，時間「${latchDuration || '未填'}」，感受「${latchFeeling || '未填'}」`;
+            if (f_latchFreq !== '未填' || f_latchDuration !== '未填' || latchFeeling) {
+                feedingDesc += `\n   • 親餵：頻率「${f_latchFreq}」，時間「${f_latchDuration}」，感受「${latchFeeling || '未填'}」`;
             }
 
             if (!feedingDesc) feedingDesc = "尚未填寫";
             // --- 修正結束 ---
 
-            // 注意：這裡在「寶寶與餵奶」的部分使用了您指定的詳細格式
-            // 且調整了體重斜線前的空格，使其符合「出生 3000g/ 目前 8111g」
-            const finalMessage = `您好，我想預約泌乳服務！\n\n【Dorabeauty 諮詢資料表】\n1. 媽咪資料\n👤 姓名：${name}\n📞 電話：${phone}\n\n2. 生產資訊\n📅 日期：${birthDate || '未填'}\n🏥 方式：${method} / 第 ${parity || '?'} 胎\n🍼 經驗：${exp || '無'}\n\n3. 地點\n🏠 地址：${finalAddress} (${calculationResult.source})\n🏥 醫院：${hospital || '未填'}\n🏨 月中：${center || '無'}\n\n4. 寶寶與餵奶\n👶 體重：出生 ${birthWeight || '--'}/ 目前 ${currentWeight || '--'}\n🥛 餵奶方式：${feedingDesc}\n\n5. 需求協助\n❓ 狀況：${issue || '當面說明'}\n\n-------------------\n【費用試算結果】\n🚗 預估路程：${calculationResult.dist} km\n💰 試算總額：$${calculationResult.total.toLocaleString()}\n(含基本費 $2,000 + 車馬費 $${calculationResult.fee})\n\n※ 資料僅供評估使用，實際報價以老師確認為主。`;
+            const finalMessage = `您好，我想預約泌乳服務！\n\n【Dorabeauty 諮詢資料表】\n1. 媽咪資料\n👤 姓名：${name}\n📞 電話：${phone}\n\n2. 生產資訊\n📅 日期：${birthDate || '未填'}\n🏥 方式：${method} / 第 ${parity || '?'} 胎\n🍼 經驗：${exp || '無'}\n\n3. 地點\n🏠 地址：${finalAddress} (${calculationResult.source})\n🏥 醫院：${hospital || '未填'}\n🏨 月中：${center || '無'}\n\n4. 寶寶與餵奶\n👶 體重：出生 ${f_birthWeight}/ 目前 ${f_currentWeight}\n🥛 餵奶方式：${feedingDesc}\n\n5. 需求協助\n❓ 狀況：${issue || '當面說明'}\n\n-------------------\n【費用試算結果】\n🚗 預估路程：${calculationResult.dist} km\n💰 試算總額：$${calculationResult.total.toLocaleString()}\n(含基本費 $2,000 + 車馬費 $${calculationResult.fee})\n\n※ 資料僅供評估使用，實際報價以老師確認為主。`;
 
             const el = document.createElement('textarea');
             el.value = finalMessage;
@@ -668,4 +682,5 @@
     </script>
 </body>
 </html>
+
 
