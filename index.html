@@ -132,12 +132,14 @@
                             </div>
                             <div class="bg-white/5 p-4 rounded-[1.5rem] mt-4 leading-relaxed border border-white/5 shadow-inner">
                                 <span class="text-amber-500 font-black text-xs uppercase block mb-1 tracking-widest">📍 預約地點</span>
-                                <span id="res-addr" class="text-white font-bold block text-base truncate">--</span>
+                                <!-- 修改點：這裡會動態插入來源標籤 -->
+                                <div id="res-addr-container">
+                                     <span id="res-addr" class="text-white font-bold text-base break-words">--</span>
+                                </div>
                             </div>
                         </div>
 
                         <div class="flex flex-col gap-3 mt-8">
-                            <!-- 按鈕文字變更為引導下一步 -->
                             <button id="next-step-btn" onclick="openFormModal()" class="bg-amber-500 text-white py-5 rounded-2xl flex items-center justify-center gap-3 tap shadow-lg transition-all hover:bg-amber-400 w-full">
                                 <span class="text-lg font-black tracking-widest">下一步：填寫諮詢表單</span>
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -189,7 +191,6 @@
                 </div>
 
                 <!-- Form Content -->
-                <!-- 移除了 pb-32，讓按鈕緊接在後 -->
                 <div class="p-8 space-y-8">
                     
                     <!-- 1. 基本資料 -->
@@ -309,7 +310,6 @@
                 </div>
 
                 <!-- Footer Actions -->
-                <!-- 修正：移除 fixed，改為與內容接續顯示 -->
                 <div class="p-6 border-t border-slate-100 flex flex-col gap-2 rounded-b-[2.5rem]">
                      <button onclick="submitFormToLine()" class="w-full bg-[#06C755] text-white py-4 rounded-2xl flex items-center justify-center gap-2 tap shadow-lg hover:bg-[#05b34c] transition-all">
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor" class="shrink-0"><path d="M24 10.304c0-4.587-4.825-8.317-10.764-8.317-5.938 0-10.764 3.73-10.764 8.317 0 4.108 3.821 7.545 8.995 8.21 0.35 0.075 0.825 0.231 0.945 0.531 0.108 0.273 0.071 0.7 0.035 0.976 0 0-0.128 0.772-0.156 0.938-0.047 0.272-0.219 1.065 0.944 0.582 1.163-0.483 6.279-3.698 8.564-6.335 1.564-1.801 2.205-3.555 2.205-4.902z"/></svg>
@@ -322,7 +322,7 @@
     </div>
 
     <footer class="text-center text-slate-300 text-xs tracking-[0.4em] uppercase py-12 font-black px-4">
-        Dorabeauty Maternal Pro v18.4
+        Dorabeauty Maternal Pro v18.5
     </footer>
 
     <script>
@@ -343,11 +343,13 @@
 
         let geocoder, distanceService, isGoogleReady = false;
         // 儲存試算結果，不包含個人資料，僅包含金額與距離
+        // 新增 source 欄位紀錄運算來源
         let calculationResult = {
             dist: 0,
             fee: 0,
             total: 0,
-            rawAddress: ""
+            rawAddress: "",
+            source: "" 
         };
 
         window.initGoogleServices = function() {
@@ -398,7 +400,8 @@
                 if (status === "OK" && response.rows[0].elements[0].status === "OK") {
                     let distanceKm = response.rows[0].elements[0].distance.value / 1000;
                     if (distanceKm < 1.5 || rawInput.includes("永嘉新村")) distanceKm = 0;
-                    showResult(parseFloat((distanceKm * 2).toFixed(1)), rawInput);
+                    // 加入第三個參數：來源
+                    showResult(parseFloat((distanceKm * 2).toFixed(1)), rawInput, "Google Maps");
                 } else { calculateStandardDistance(destLatLng.lat(), destLatLng.lng(), rawInput); }
             });
         }
@@ -413,27 +416,38 @@
             if (d < 1.5 || rawInput.includes("永嘉新村")) d = 0;
             const roundTrip = parseFloat((d * 1.4 * 2).toFixed(1));
             resetBtn();
-            showResult(roundTrip, rawInput);
+            // 加入第三個參數：來源
+            showResult(roundTrip, rawInput, "備用機制");
         }
 
-        function showResult(dist, rawInput) {
+        // 修改：接收 source 參數
+        function showResult(dist, rawInput, source) {
             let travelFee = 0;
             if (dist > CONFIG.freeAllowanceKm) { travelFee = Math.floor(dist / 10) * CONFIG.stepPrice; }
             const total = 2000 + travelFee;
             
-            // 儲存全域變數供表單使用
+            // 儲存全域變數供表單使用，加入 source
             calculationResult = {
                 dist: dist,
                 fee: travelFee,
                 total: total,
-                rawAddress: rawInput
+                rawAddress: rawInput,
+                source: source
             };
 
             document.getElementById('res-block').classList.remove('hidden');
             document.getElementById('res-total').innerText = total.toLocaleString();
             document.getElementById('res-dist').innerText = dist;
             document.getElementById('res-travel-fee').innerText = travelFee;
-            document.getElementById('res-addr').innerText = rawInput;
+            
+            // 處理標籤顯示
+            let badgeClass = source === "Google Maps" 
+                ? "text-emerald-400 border-emerald-500/30 bg-emerald-500/10" 
+                : "text-amber-400 border-amber-500/30 bg-amber-500/10";
+                
+            let badgeHtml = `<span class="inline-block ml-2 text-[10px] px-2 py-0.5 rounded-full border ${badgeClass} align-middle tracking-wider">${source}</span>`;
+            
+            document.getElementById('res-addr').innerHTML = rawInput + badgeHtml;
             
             document.getElementById('res-block').scrollIntoView({ behavior: 'smooth' });
         }
@@ -496,7 +510,7 @@
             
             const issue = document.getElementById('f-issue').value;
 
-            // 2. 組合餵奶描述 (修正：自動加上單位)
+            // 2. 組合餵奶描述
             let feedingDesc = "";
             
             // 手擠乳處理
@@ -516,7 +530,7 @@
 
             if (!feedingDesc) feedingDesc = "尚未填寫";
 
-            // 3. 產生完整訊息
+            // 3. 產生完整訊息 (修改：加入運算來源標註)
             const finalMessage = 
 `您好，我想預約泌乳服務！
 
@@ -531,7 +545,7 @@
 🍼 經驗：${exp || '無'}
 
 3. 地點
-🏠 地址：${finalAddress}
+🏠 地址：${finalAddress} (${calculationResult.source})
 🏥 醫院：${hospital || '未填'}
 🏨 月中：${center || '無'}
 
@@ -589,5 +603,4 @@
     </script>
 </body>
 </html>
-
 
