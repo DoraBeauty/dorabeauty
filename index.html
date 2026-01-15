@@ -318,7 +318,7 @@
     </div>
 
     <footer class="text-center text-slate-300 text-xs tracking-[0.4em] uppercase py-12 font-black px-4">
-        Dorabeauty Maternal Pro v18.1
+        Dorabeauty Maternal Pro v18.2
     </footer>
 
     <script>
@@ -481,7 +481,6 @@
             const center = document.getElementById('f-center').value;
             const finalAddress = document.getElementById('f-address').value;
             
-            // 修正：分別取得出生體重與目前體重
             const birthWeight = document.getElementById('f-birth-weight').value;
             const currentWeight = document.getElementById('f-current-weight').value;
             
@@ -493,10 +492,14 @@
             
             const issue = document.getElementById('f-issue').value;
 
-            // 2. 組合餵奶描述
+            // 2. 組合餵奶描述 (優化顯示格式，加上清楚的標籤)
             let feedingDesc = "";
-            if (handFreq || handVol) feedingDesc += `\n   - 手擠乳：${handFreq || '--'} / ${handVol || '--'}`;
-            if (latchFreq || latchDuration || latchFeeling) feedingDesc += `\n   - 親餵：${latchFreq || '--'} / ${latchDuration || '--'} / ${latchFeeling || '--'}`;
+            if (handFreq || handVol) {
+                feedingDesc += `\n   • 手擠乳：頻率「${handFreq || '未填'}」，奶量「${handVol || '未填'}」`;
+            }
+            if (latchFreq || latchDuration || latchFeeling) {
+                feedingDesc += `\n   • 親餵：頻率「${latchFreq || '未填'}」，時間「${latchDuration || '未填'}」，感受「${latchFeeling || '未填'}」`;
+            }
             if (!feedingDesc) feedingDesc = "尚未填寫";
 
             // 3. 產生完整訊息
