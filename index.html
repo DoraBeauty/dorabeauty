@@ -169,7 +169,7 @@
         <div class="absolute inset-0 overflow-y-auto no-scrollbar py-10 px-4">
             <div class="bg-white rounded-[2.5rem] w-full max-w-lg mx-auto modal-animate shadow-2xl relative min-h-[80vh]">
                 
-                <!-- Modal Header (移除了 sticky 屬性) -->
+                <!-- Modal Header -->
                 <div class="bg-amber-600 p-6 rounded-t-[2.5rem] flex justify-between items-center shadow-md">
                     <div>
                         <h3 class="text-white text-xl font-black">填寫諮詢資料</h3>
@@ -253,7 +253,7 @@
                         </div>
                     </div>
 
-                    <!-- 4. 寶寶資訊 (已修正：分為兩格) -->
+                    <!-- 4. 寶寶資訊 -->
                     <div class="space-y-4">
                         <h4 class="section-title">
                             <span class="w-1.5 h-5 bg-amber-500 rounded-full"></span> 4. 寶寶資訊
@@ -275,18 +275,23 @@
                         <h4 class="section-title">
                             <span class="w-1.5 h-5 bg-amber-500 rounded-full"></span> 5. 目前餵奶方式 (選填)
                         </h4>
+                        <!-- 手擠乳區塊 -->
                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
                             <p class="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">A. 若有手擠乳</p>
                             <div class="grid grid-cols-2 gap-3">
+                                <!-- 修正：補上括號 ) -->
                                 <input type="text" id="f-hand-freq" class="form-input text-sm" placeholder="頻率 (幾小時一次)">
                                 <input type="text" id="f-hand-vol" class="form-input text-sm" placeholder="一次擠奶量 (cc)">
                             </div>
                         </div>
+                        <!-- 親餵區塊 -->
                         <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
                             <p class="text-xs font-bold text-slate-400 mb-3 uppercase tracking-wider">B. 若有親餵</p>
                             <div class="grid grid-cols-2 gap-3 mb-3">
+                                <!-- 修正：補上括號 ) -->
                                 <input type="text" id="f-latch-freq" class="form-input text-sm" placeholder="頻率 (幾小時一次)">
-                                <input type="text" id="f-latch-duration" class="form-input text-sm" placeholder="一次餵多久">
+                                <!-- 修正：提示改為分鐘 -->
+                                <input type="text" id="f-latch-duration" class="form-input text-sm" placeholder="一次餵多久 (分鐘)">
                             </div>
                             <input type="text" id="f-latch-feeling" class="form-input text-sm" placeholder="親餵感覺 (痛/順利/寶寶不含乳)">
                         </div>
@@ -318,7 +323,7 @@
     </div>
 
     <footer class="text-center text-slate-300 text-xs tracking-[0.4em] uppercase py-12 font-black px-4">
-        Dorabeauty Maternal Pro v18.2
+        Dorabeauty Maternal Pro v18.3
     </footer>
 
     <script>
@@ -492,14 +497,24 @@
             
             const issue = document.getElementById('f-issue').value;
 
-            // 2. 組合餵奶描述 (優化顯示格式，加上清楚的標籤)
+            // 2. 組合餵奶描述 (修正：自動加上單位)
             let feedingDesc = "";
+            
+            // 手擠乳處理
             if (handFreq || handVol) {
-                feedingDesc += `\n   • 手擠乳：頻率「${handFreq || '未填'}」，奶量「${handVol || '未填'}」`;
+                const hFreq = handFreq ? `${handFreq}小時一次` : '未填';
+                const hVol = handVol ? `${handVol}cc` : '未填';
+                feedingDesc += `\n   • 手擠乳：頻率「${hFreq}」，奶量「${hVol}」`;
             }
+            
+            // 親餵處理
             if (latchFreq || latchDuration || latchFeeling) {
-                feedingDesc += `\n   • 親餵：頻率「${latchFreq || '未填'}」，時間「${latchDuration || '未填'}」，感受「${latchFeeling || '未填'}」`;
+                const lFreq = latchFreq ? `${latchFreq}小時一次` : '未填';
+                const lDur = latchDuration ? `${latchDuration}分鐘` : '未填';
+                const lFeel = latchFeeling || '未填'; 
+                feedingDesc += `\n   • 親餵：頻率「${lFreq}」，時間「${lDur}」，感受「${lFeel}」`;
             }
+
             if (!feedingDesc) feedingDesc = "尚未填寫";
 
             // 3. 產生完整訊息
