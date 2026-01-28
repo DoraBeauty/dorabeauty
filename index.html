@@ -517,22 +517,29 @@
             } catch (e) { resetBtn(); alert("連線不穩。"); }
         }
 
-        function calculateGoogleDistance(destLatLng, rawInput) {
+function calculateGoogleDistance(destLatLng, rawInput) {
             distanceService.getDistanceMatrix({
                 origins: [CONFIG.storeLocation],
                 destinations: [destLatLng],
                 travelMode: google.maps.TravelMode.DRIVING,
                 unitSystem: google.maps.UnitSystem.METRIC,
+                // ▼▼▼ 新增這段設定 (開始) ▼▼▼
+                drivingOptions: {
+                    departureTime: new Date(),  // 設定為「現在出發」，這會強制 Google 考慮路況
+                    trafficModel: 'best_guess'  // 要求 Google 猜測「最佳路徑」，通常會選擇快速道路
+                }
+                // ▲▲▲ 新增這段設定 (結束) ▲▲▲
             }, (response, status) => {
                 resetBtn();
                 if (status === "OK" && response.rows[0].elements[0].status === "OK") {
                     let distanceKm = response.rows[0].elements[0].distance.value / 1000;
                     if (distanceKm < 1.5 || rawInput.includes("永嘉新村")) distanceKm = 0;
+                    
+                    // 這裡維持原本的 * 2 (來回距離)
                     showResult(parseFloat((distanceKm * 2).toFixed(1)), rawInput, "Google Maps");
                 } else { calculateStandardDistance(destLatLng.lat(), destLatLng.lng(), rawInput); }
             });
         }
-
         function calculateStandardDistance(lat, lng, rawInput) {
             const R = 6371;
             const dLat = (lat - CONFIG.storeLat) * Math.PI / 180;
