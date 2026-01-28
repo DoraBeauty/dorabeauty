@@ -407,7 +407,7 @@
             "今天也要愛自己多一點喔！💖"
         ];
 
-        let geocoder, distanceService, directionsService, isGoogleReady = false;
+        let geocoder, distanceService, isGoogleReady = false;
         let calculationResult = {
             dist: 0, fee: 0, total: 0, rawAddress: "", source: "" 
         };
@@ -484,7 +484,10 @@
             try {
                 geocoder = new google.maps.Geocoder();
                 distanceService = new google.maps.DistanceMatrixService();
-                directionsService = new google.maps.DirectionsService();
+                new google.maps.places.Autocomplete(document.getElementById('addr-val'), {
+                    componentRestrictions: { country: "tw" },
+                    fields: ["formatted_address", "geometry"]
+                });
                 isGoogleReady = true; updateStatus("系統就緒");
             } catch (e) { updateStatus("目前為備用模式"); }
         };
@@ -515,24 +518,17 @@
         }
 
         function calculateGoogleDistance(destLatLng, rawInput) {
-            // 使用 Directions Service 獲得實際駕車路線
-            directionsService.route({
-                origin: CONFIG.storeLocation,
-                destination: destLatLng,
+            distanceService.getDistanceMatrix({
+                origins: [CONFIG.storeLocation],
+                destinations: [destLatLng],
                 travelMode: google.maps.TravelMode.DRIVING,
+                unitSystem: google.maps.UnitSystem.METRIC,
             }, (response, status) => {
                 resetBtn();
-                if (status === "OK" && response.routes.length > 0) {
-                    // 取得第一條路線的距離（公里）
-                    const leg = response.routes[0].legs[0];
-                    let distanceKm = leg.distance.value / 1000;
-                    // 來回距離
-                    const roundTripKm = parseFloat((distanceKm * 2).toFixed(1));
-                    if (roundTripKm < 1.5 || rawInput.includes("永嘉新村")) {
-                        showResult(0, rawInput, "Google Maps 實際路線");
-                    } else {
-                        showResult(roundTripKm, rawInput, "Google Maps 實際路線");
-                    }
+                if (status === "OK" && response.rows[0].elements[0].status === "OK") {
+                    let distanceKm = response.rows[0].elements[0].distance.value / 1000;
+                    if (distanceKm < 1.5 || rawInput.includes("永嘉新村")) distanceKm = 0;
+                    showResult(parseFloat((distanceKm * 2).toFixed(1)), rawInput, "Google Maps");
                 } else { calculateStandardDistance(destLatLng.lat(), destLatLng.lng(), rawInput); }
             });
         }
@@ -686,5 +682,4 @@
     </script>
 </body>
 </html>
-
 
