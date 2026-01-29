@@ -519,7 +519,7 @@
 
         function calculateGoogleDistance(destLatLng, rawInput) {
             distanceService.getDistanceMatrix({
-                origins: [CONFIG.storeLocation],
+                origins: [{ lat: CONFIG.storeLat, lng: CONFIG.storeLng }],
                 destinations: [destLatLng],
                 travelMode: google.maps.TravelMode.DRIVING,
                 unitSystem: google.maps.UnitSystem.METRIC,
