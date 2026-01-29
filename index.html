@@ -387,7 +387,7 @@
             brandName: "Dorabeauty",
             lineId: "bmy3560l",
             storeLocation: "南投縣中寮鄉永福村10鄰永嘉新村23巷2弄38號",
-            storeLat: 23.931213, storeLng: 120.730107,
+            storeLat: 23.895275, storeLng: 120.733264,
             baseServiceFee: 2000, stepPrice: 100, freeAllowanceKm: 10
         };
 
@@ -517,59 +517,22 @@
             } catch (e) { resetBtn(); alert("連線不穩。"); }
         }
 
-function calculateGoogleDistance(destLatLng, rawInput) {
-            console.log("開始向 Google 請求路徑...");
-            
-            // 建立請求物件
-            const request = {
+        function calculateGoogleDistance(destLatLng, rawInput) {
+            distanceService.getDistanceMatrix({
                 origins: [CONFIG.storeLocation],
                 destinations: [destLatLng],
                 travelMode: google.maps.TravelMode.DRIVING,
                 unitSystem: google.maps.UnitSystem.METRIC,
-                drivingOptions: {
-                    departureTime: new Date(),
-                    trafficModel: 'best_guess'
-                }
-            };
-
-            try {
-                distanceService.getDistanceMatrix(request, (response, status) => {
-                    // 無論成功失敗，先停止轉圈圈
-                    resetBtn(); 
-                    
-                    // 1. 成功的情況
-                    if (status === "OK" && response.rows[0].elements[0].status === "OK") {
-                        let distanceKm = response.rows[0].elements[0].distance.value / 1000;
-                        if (distanceKm < 1.5 || rawInput.includes("永嘉新村")) distanceKm = 0;
-                        
-                        // 顯示成功結果
-                        showResult(parseFloat((distanceKm * 2).toFixed(1)), rawInput, "Google Maps");
-                    } 
-                    // 2. 失敗的情況 (跳出錯誤訊息告訴我們原因)
-                    else {
-                        // 取得錯誤原因
-                        let errorMsg = status;
-                        if (response && response.rows && response.rows[0] && response.rows[0].elements[0]) {
-                            // 如果有更詳細的錯誤 (例如 ZERO_RESULTS)
-                            if (response.rows[0].elements[0].status !== "OK") {
-                                errorMsg = response.rows[0].elements[0].status;
-                            }
-                        }
-
-                        // ★ 這裡會跳出警告視窗，告訴你是什麼錯！
-                        alert("Google API 請求失敗，原因：" + errorMsg + "\n\n(系統將自動切換為備用計算)");
-                        console.error("API Error:", response);
-                        
-                        // 切換備用
-                        calculateStandardDistance(destLatLng.lat(), destLatLng.lng(), rawInput);
-                    }
-                });
-            } catch (e) {
+            }, (response, status) => {
                 resetBtn();
-                alert("程式執行發生錯誤：" + e);
-                calculateStandardDistance(destLatLng.lat(), destLatLng.lng(), rawInput);
-            }
+                if (status === "OK" && response.rows[0].elements[0].status === "OK") {
+                    let distanceKm = response.rows[0].elements[0].distance.value / 1000;
+                    if (distanceKm < 1.5 || rawInput.includes("永嘉新村")) distanceKm = 0;
+                    showResult(parseFloat((distanceKm * 2).toFixed(1)), rawInput, "Google Maps");
+                } else { calculateStandardDistance(destLatLng.lat(), destLatLng.lng(), rawInput); }
+            });
         }
+
         function calculateStandardDistance(lat, lng, rawInput) {
             const R = 6371;
             const dLat = (lat - CONFIG.storeLat) * Math.PI / 180;
@@ -719,4 +682,3 @@ function calculateGoogleDistance(destLatLng, rawInput) {
     </script>
 </body>
 </html>
-
