@@ -7,10 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap');
-        body { 
-            font-family: 'Noto Sans TC', sans-serif; 
-            -webkit-tap-highlight-color: transparent; 
-            background-color: #fdfaf0; 
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            background-color: #fdfaf0;
             margin: 0; padding: 0;
             overscroll-behavior-y: contain;
             overflow-x: hidden; /* 防止愛心飄出產生卷軸 */
@@ -71,7 +71,7 @@
         /* 隱藏 Scrollbar 但保持捲動 */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
+
         /* Logo 特效動畫 */
         @keyframes float {
             0%, 100% { transform: translateY(0); }
@@ -97,6 +97,13 @@
         .toast-enter-active { transform: translateY(0); opacity: 1; transition: all 0.3s ease-out; }
         .toast-exit { transform: translateY(0); opacity: 1; }
         .toast-exit-active { transform: translateY(-20px); opacity: 0; transition: all 0.3s ease-in; }
+
+        /* 自定義滑入動畫 (替代 tailwindcss-animate) */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-slide-up { animation: fadeSlideUp 0.5s ease-out forwards; }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen text-pretty">
@@ -110,12 +117,12 @@
         </div>
 
         <div class="max-w-md mx-auto relative z-10 flex flex-col items-center">
-            
+
             <!-- 全新設計的 Logo 區塊 (含彩蛋觸發器) -->
             <div class="relative group logo-float mb-1 select-none">
                 <!-- 1. 呼吸光暈 (Glow) -->
                 <div class="absolute -inset-2 bg-gradient-to-tr from-amber-200 to-pink-300 rounded-full blur opacity-40 animate-pulse group-hover:opacity-70 transition duration-500"></div>
-                
+
                 <!-- 2. 圓形容器 + 邊框 -->
                 <div class="relative w-28 h-28 bg-white p-1.5 rounded-full shadow-[0_10px_30px_-5px_rgba(0,0,0,0.2)] flex items-center justify-center border-4 border-white/40 backdrop-blur-sm">
                     <!-- 圖片 -->
@@ -135,7 +142,7 @@
 
     <main class="max-w-md mx-auto px-6 -mt-16 pb-20 relative z-20">
         <div class="glass-card rounded-[3rem] p-8 shadow-2xl border border-white/60">
-            
+
             <!-- 問候語與提醒 -->
             <div class="flex flex-col items-center text-center mb-8 mt-1">
                 <div class="w-16 h-16 bg-amber-100 rounded-[1.5rem] flex items-center justify-center text-amber-600 mb-4 shadow-sm border border-amber-200/30">
@@ -163,7 +170,7 @@
             </div>
 
             <!-- 結果顯示區 -->
-            <div id="res-block" class="hidden mt-10 pt-10 border-t-2 border-dashed border-slate-100 animate-in fade-in slide-in-from-bottom-5">
+            <div id="res-block" class="hidden mt-10 pt-10 border-t-2 border-dashed border-slate-100 fade-slide-up">
                 <div class="bg-slate-900 rounded-[2.5rem] p-8 text-white relative overflow-hidden shadow-2xl border-t-4 border-amber-500">
                     <div class="relative z-10 text-center">
                         <p class="text-amber-400 text-xs font-bold uppercase tracking-widest mb-2">預估報價總額</p>
@@ -171,7 +178,7 @@
                             <span class="text-3xl text-amber-300 font-light">$</span>
                             <span id="res-total" class="text-6xl font-black tracking-tighter">0</span>
                         </div>
-                        
+
                         <div class="space-y-4 border-t border-white/10 pt-6 text-sm text-left">
                             <div class="flex justify-between items-center text-slate-400 font-bold tracking-tight">
                                 <span>基本服務費</span>
@@ -220,7 +227,7 @@
     <div id="form-modal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm hidden z-[9999] overflow-hidden">
         <div class="absolute inset-0 overflow-y-auto no-scrollbar py-10 px-4">
             <div class="bg-white rounded-[2.5rem] w-full max-w-lg mx-auto modal-animate shadow-2xl relative min-h-[80vh]">
-                
+
                 <!-- Modal Header -->
                 <div class="bg-amber-600 p-6 rounded-t-[2.5rem] flex justify-between items-center shadow-md">
                     <div>
@@ -242,7 +249,7 @@
 
                 <!-- Form Content -->
                 <div class="p-6 sm:p-8 space-y-8">
-                    
+
                     <!-- 1. 基本資料 -->
                     <div class="space-y-4">
                         <h4 class="section-title">
@@ -382,7 +389,7 @@
     <div id="toast-container" class="fixed top-24 left-1/2 transform -translate-x-1/2 z-[10000] flex flex-col gap-2 items-center pointer-events-none w-full max-w-sm px-4"></div>
 
     <script>
-        const GOOGLE_API_KEY = "AIzaSyAXSGaFCS3VcYghu3rUh4nmogf0qwJCuCo"; 
+        const GOOGLE_API_KEY = "AIzaSyAXSGaFCS3VcYghu3rUh4nmogf0qwJCuCo";
         const CONFIG = {
             brandName: "Dorabeauty",
             lineId: "bmy3560l",
@@ -409,13 +416,13 @@
 
         let geocoder, distanceService, isGoogleReady = false;
         let calculationResult = {
-            dist: 0, fee: 0, total: 0, rawAddress: "", source: "" 
+            dist: 0, fee: 0, total: 0, rawAddress: "", source: ""
         };
 
         // --- 彩蛋功能邏輯 ---
         function triggerLoveEgg(e) {
             e.stopPropagation(); // 防止冒泡
-            
+
             // 1. 按鈕動畫
             const btn = document.getElementById('easter-egg-btn');
             const icon = document.getElementById('heart-icon');
@@ -435,7 +442,7 @@
             const toast = document.createElement('div');
             toast.className = 'bg-white/90 backdrop-blur-md text-pink-600 px-6 py-3 rounded-full shadow-xl border border-pink-100 font-bold text-sm tracking-wide toast-enter flex items-center gap-2';
             toast.innerHTML = `<span class="text-xl">💝</span> ${msg}`;
-            
+
             container.appendChild(toast);
 
             // 動畫進場
@@ -469,9 +476,9 @@
                     const duration = Math.random() * 2 + 3 + 's';
                     heart.style.fontSize = size;
                     heart.style.animationDuration = duration;
-                    
+
                     document.body.appendChild(heart);
-                    
+
                     // 動畫結束後移除
                     setTimeout(() => heart.remove(), 5000);
                 }, i * 100); // 錯開生成時間
@@ -497,7 +504,7 @@
             if (!rawVal) return alert("請輸入地址");
             const btn = document.getElementById('main-btn');
             btn.disabled = true; btn.innerHTML = '<span class="loader"></span> 正在試算路徑...';
-            
+
             if (isGoogleReady && geocoder) {
                 geocoder.geocode({ address: rawVal, componentRestrictions: { country: 'tw' } }, (results, status) => {
                     if (status === "OK" && results[0]) {
@@ -548,7 +555,7 @@
 
         function showResult(dist, rawInput, source) {
             let travelFee = 0;
-            if (dist > CONFIG.freeAllowanceKm) { travelFee = Math.floor(dist / 10) * CONFIG.stepPrice; }
+            if (dist > CONFIG.freeAllowanceKm) { travelFee = Math.ceil((dist - CONFIG.freeAllowanceKm) / 10) * CONFIG.stepPrice; }
             const total = 2000 + travelFee;
             calculationResult = { dist, fee: travelFee, total, rawAddress: rawInput, source };
 
@@ -556,7 +563,7 @@
             document.getElementById('res-total').innerText = total.toLocaleString();
             document.getElementById('res-dist').innerText = dist;
             document.getElementById('res-travel-fee').innerText = travelFee;
-            
+
             let badgeClass = source === "Google Maps" ? "text-emerald-400 border-emerald-500/30 bg-emerald-500/10" : "text-amber-400 border-amber-500/30 bg-amber-500/10";
             let badgeHtml = `<span class="inline-block ml-2 text-[10px] px-2 py-0.5 rounded-full border ${badgeClass} align-middle tracking-wider">${source}</span>`;
             document.getElementById('res-addr').innerHTML = rawInput + badgeHtml;
@@ -587,7 +594,7 @@
         window.submitFormToLine = () => {
             const name = document.getElementById('f-name').value.trim();
             const phone = document.getElementById('f-phone').value.trim();
-            
+
             if (!name || !phone) { alert("請填寫姓名與聯絡電話，方便老師聯繫您喔！"); return; }
 
             const birthDate = document.getElementById('f-birthdate').value;
@@ -601,7 +608,7 @@
             const latchFeeling = document.getElementById('f-latch-feeling').value;
 
             // --- 修正開始：自動補上單位邏輯 ---
-            
+
             // 定義一個小幫手函式：如果內容只有數字，就加上指定的單位
             const addUnit = (val, unit) => {
                 if (!val) return '未填';
@@ -616,20 +623,20 @@
             // 取得欄位值並套用單位
             const f_birthWeight = addUnit(document.getElementById('f-birth-weight').value, 'g');
             const f_currentWeight = addUnit(document.getElementById('f-current-weight').value, 'g');
-            
+
             const f_handFreq = addUnit(document.getElementById('f-hand-freq').value, '小時一次');
             const f_handVol = addUnit(document.getElementById('f-hand-vol').value, 'cc');
-            
+
             const f_latchFreq = addUnit(document.getElementById('f-latch-freq').value, '小時一次');
             const f_latchDuration = addUnit(document.getElementById('f-latch-duration').value, '分鐘');
 
             let feedingDesc = "";
-            
+
             // 處理手擠乳資訊
             if (f_handFreq !== '未填' || f_handVol !== '未填') {
                 feedingDesc += `\n   • 手擠乳：頻率「${f_handFreq}」，奶量「${f_handVol}」`;
             }
-            
+
             // 處理親餵資訊
             if (f_latchFreq !== '未填' || f_latchDuration !== '未填' || latchFeeling) {
                 feedingDesc += `\n   • 親餵：頻率「${f_latchFreq}」，時間「${f_latchDuration}」，感受「${latchFeeling || '未填'}」`;
@@ -640,23 +647,38 @@
 
             const finalMessage = `您好，我想預約泌乳服務！\n\n【Dorabeauty 諮詢資料表】\n1. 媽咪資料\n👤 姓名：${name}\n📞 電話：${phone}\n\n2. 生產資訊\n📅 日期：${birthDate || '未填'}\n🏥 方式：${method} / 第 ${parity || '?'} 胎\n🍼 經驗：${exp || '無'}\n\n3. 地點\n🏠 地址：${finalAddress} (${calculationResult.source})\n🏥 醫院：${hospital || '未填'}\n🏨 月中：${center || '無'}\n\n4. 寶寶與餵奶\n👶 體重：出生 ${f_birthWeight}/ 目前 ${f_currentWeight}\n🥛 餵奶方式：${feedingDesc}\n\n5. 需求協助\n❓ 狀況：${issue || '當面說明'}\n\n-------------------\n【費用試算結果】\n🚗 預估路程：${calculationResult.dist} km\n💰 試算總額：$${calculationResult.total.toLocaleString()}\n(含基本費 $2,000 + 車馬費 $${calculationResult.fee})\n\n※ 資料僅供評估使用，實際報價以老師確認為主。`;
 
-            const el = document.createElement('textarea');
-            el.value = finalMessage;
-            el.setAttribute('readonly', '');
-            el.style.position = 'absolute'; el.style.left = '-9999px';
-            document.body.appendChild(el);
-            el.select(); el.setSelectionRange(0, 99999);
-            document.execCommand('copy');
-            document.body.removeChild(el);
+            const fallbackCopy = (text) => {
+                const el = document.createElement('textarea');
+                el.value = text;
+                el.setAttribute('readonly', '');
+                el.style.position = 'absolute'; el.style.left = '-9999px';
+                document.body.appendChild(el);
+                el.select(); el.setSelectionRange(0, 99999);
+                document.execCommand('copy');
+                document.body.removeChild(el);
+            };
 
-            closeFormModal();
+            const proceed = () => {
+                closeFormModal();
+                const cleanId = CONFIG.lineId.replace('@','');
+                const encodedMsg = encodeURIComponent(finalMessage);
+                const autoFillUrl = `https://line.me/R/oaMessage/@${cleanId}/?${encodedMsg}`;
 
-            const cleanId = CONFIG.lineId.replace('@','');
-            const encodedMsg = encodeURIComponent(finalMessage);
-            const autoFillUrl = `https://line.me/R/oaMessage/@${cleanId}/?${encodedMsg}`;
+                if (confirm("資料已複製！\n\n系統將嘗試自動帶入訊息至 LINE。\n\n若 LINE 開啟後文字未出現，請直接在對話框「貼上」即可。")) {
+                    window.location.href = autoFillUrl;
+                }
+            };
 
-            if (confirm("資料已複製！\n\n系統將嘗試自動帶入訊息至 LINE。\n\n若 LINE 開啟後文字未出現，請直接在對話框「貼上」即可。")) {
-                window.location.href = autoFillUrl;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(finalMessage)
+                    .then(proceed)
+                    .catch(() => {
+                        fallbackCopy(finalMessage);
+                        proceed();
+                    });
+            } else {
+                fallbackCopy(finalMessage);
+                proceed();
             }
         };
 
